@@ -7,12 +7,12 @@ import { CheckoutForm } from "./_components/CheckoutForm"
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
 
 type PageProps = {
-  params: { id: string }  // Type for dynamic params
+  params: { id: string }
 }
 
-// The component is async because we are using asynchronous operations (fetching data and calling Stripe API)
-const PurchasePage = async ({ params }: PageProps) => {
-  const { id } = params
+// Using Next.js 13+ App Router and async components to handle dynamic routes
+export default async function PurchasePage({ params }: PageProps) {
+  const { id } = params // Destructure the `id` from params
 
   // Fetch product data from the database using the `id`
   const product = await db.product.findUnique({ where: { id } })
@@ -40,5 +40,3 @@ const PurchasePage = async ({ params }: PageProps) => {
     />
   )
 }
-
-export default PurchasePage
