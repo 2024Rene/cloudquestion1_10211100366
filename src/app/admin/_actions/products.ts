@@ -55,8 +55,7 @@ export async function addProduct(prevState: unknown, formData: FormData) {
     },
   })
 
-  // Create the product on Stripe
-  const stripeProduct = await stripe.products.create({
+  await stripe.products.create({
     name: data.name,
     description: data.description,
     images: [imagePath], // use the image path for the product image
@@ -64,6 +63,7 @@ export async function addProduct(prevState: unknown, formData: FormData) {
       filePath,
     },
   })
+  
 
   // Revalidate paths and redirect
   revalidatePath("/")
