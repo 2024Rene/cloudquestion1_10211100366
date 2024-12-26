@@ -5,15 +5,16 @@ import { CheckoutForm } from "./_components/CheckoutForm";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
-type Params = {
-  id: string;
-};
-
-export default async function PurchasePage({ params }: { params: Params }) {
-  const { id } = params;
+export default async function PurchasePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const resolvedParams = await params; // Resolve the promise
+  const { id } = resolvedParams;
 
   const product = await db.product.findUnique({ where: { id } });
-  if (product == null) return notFound();
+  if (!product) return notFound();
 
   const paymentIntent = await stripe.paymentIntents.create({
     amount: product.priceInCents,
@@ -21,7 +22,7 @@ export default async function PurchasePage({ params }: { params: Params }) {
     metadata: { productId: product.id },
   });
 
-  if (paymentIntent.client_secret == null) {
+  if (!paymentIntent.client_secret) {
     throw new Error("Stripe failed to create payment intent");
   }
 
