@@ -1,7 +1,9 @@
 import { unstable_cache as nextCache } from "next/cache"
 import { cache as reactCache } from "react"
 
-type Callback = (...args: any[]) => Promise<any>
+// Define a type for the callback function with properly inferred argument and return types
+type Callback<Args extends any[] = any[], Return = any> = (...args: Args) => Promise<Return>;
+
 export function cache<T extends Callback>(
   cb: T,
   keyParts: string[],

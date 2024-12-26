@@ -26,7 +26,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className= {cn("bg-background min-h-screen font-sans antialiased", geistSans.variable)}
+        className={cn(
+          "bg-background min-h-screen font-sans antialiased",
+          geistSans.variable,
+          geistMono.variable // Apply Geist Mono font
+        )}
       >
         {children}
       </body>

@@ -30,10 +30,12 @@ export async function addProduct(prevState: unknown, formData: FormData) {
 
   const data = result.data
 
+  // Save the file locally
   await fs.mkdir("products", { recursive: true })
   const filePath = `products/${crypto.randomUUID()}-${data.file.name}`
   await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()))
 
+  // Save the image locally
   await fs.mkdir("public/products", { recursive: true })
   const imagePath = `/products/${crypto.randomUUID()}-${data.image.name}`
   await fs.writeFile(
@@ -41,6 +43,7 @@ export async function addProduct(prevState: unknown, formData: FormData) {
     Buffer.from(await data.image.arrayBuffer())
   )
 
+  // Create the product in the database
   await db.product.create({
     data: {
       isAvailableForPurchase: false,
@@ -52,6 +55,17 @@ export async function addProduct(prevState: unknown, formData: FormData) {
     },
   })
 
+  // Create the product on Stripe
+  const stripeProduct = await stripe.products.create({
+    name: data.name,
+    description: data.description,
+    images: [imagePath], // use the image path for the product image
+    metadata: {
+      filePath,
+    },
+  })
+
+  // Revalidate paths and redirect
   revalidatePath("/")
   revalidatePath("/products")
 

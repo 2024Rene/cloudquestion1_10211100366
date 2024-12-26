@@ -71,6 +71,8 @@ import {
                     <span className="sr-only">Actions</span>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => console.log('Some action')}> Delete Order
+                  </DropdownMenuItem>
                     <DeleteDropDownItem id={order.id} />
                   </DropdownMenuContent>
                 </DropdownMenu>
