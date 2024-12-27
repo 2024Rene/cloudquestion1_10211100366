@@ -2,12 +2,12 @@ import db from "@/db/db"
 import { NextRequest, NextResponse } from "next/server"
 import fs from "fs/promises"
 
-// Correctly type params in the GET handler
+// Ensure params is typed correctly
 export async function GET(
   req: NextRequest,
-  { params }: { params: { downloadVerificationId: string } }
+  context: { params: { downloadVerificationId: string } }
 ) {
-  const { downloadVerificationId } = params // Destructure downloadVerificationId from params
+  const { downloadVerificationId } = context.params
 
   const data = await db.downloadVerification.findUnique({
     where: { id: downloadVerificationId, expiresAt: { gt: new Date() } },
