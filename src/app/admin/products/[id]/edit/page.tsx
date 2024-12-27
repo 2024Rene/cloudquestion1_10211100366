@@ -3,10 +3,14 @@ import { PageHeader } from "../../../_components/PageHeader"
 import { ProductForm } from "../../_components/ProductForm"
 
 export default async function EditProductPage({
-  params: { id },
+  params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
+  // Await the params since they are wrapped in a Promise
+  const { id } = await params;
+
+  // Fetch the product data using the id
   const product = await db.product.findUnique({ where: { id } })
 
   return (

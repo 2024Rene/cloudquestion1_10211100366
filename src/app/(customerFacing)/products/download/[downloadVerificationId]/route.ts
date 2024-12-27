@@ -1,13 +1,10 @@
-import db from "@/db/db"
-import { NextRequest, NextResponse } from "next/server"
-import fs from "fs/promises"
+import { NextRequest, NextResponse } from "next/server";
+import db from "@/db/db";
+import fs from "fs/promises";
 
-// Adjusting the function signature to match Next.js 15 async routing style
-export async function GET(
-  req: NextRequest,
-  context: { params: Promise<{ downloadVerificationId: string }> } // params are now a Promise
-) {
-  // Await the params as they are now asynchronous
+// Define the GET handler
+export async function GET(req: NextRequest, context: { params: Promise<{ downloadVerificationId: string }> }) {
+  // Await the params since they are wrapped in a Promise
   const { downloadVerificationId } = await context.params;
 
   // Query the database for the file information

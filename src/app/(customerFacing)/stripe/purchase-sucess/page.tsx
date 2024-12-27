@@ -8,20 +8,39 @@ import Stripe from "stripe"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
 
+const createDownloadVerification = async (productId: string): Promise<string> => {
+  const expiresAt = new Date();
+  expiresAt.setHours(expiresAt.getHours() + 12); // Example: expires in 24 hours
+
+  const result = await db.downloadVerification.create({
+    data: { 
+      productId, 
+      expiresAt,  // Add expiration date here
+    },
+  });
+
+  return result.id;  // Return the ID of the created download verification
+};
+
 export default async function SuccessPage({
   searchParams,
 }: {
-  searchParams: Record<string, string>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const paymentIntentId = searchParams.payment_intent;
+  // Resolve `searchParams` from the Promise
+  const resolvedParams = await searchParams;
 
-  if (!paymentIntentId) {
+  const paymentIntentId = resolvedParams.payment_intent;
+
+  // Validate `payment_intent` exists and is a string
+  if (!paymentIntentId || typeof paymentIntentId !== "string") {
     return notFound();
   }
 
   const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
-  if (!paymentIntent.metadata?.productId) {
+  // Ensure the metadata includes a valid `productId`
+  if (!paymentIntent.metadata.productId) {
     return notFound();
   }
 
@@ -35,11 +54,14 @@ export default async function SuccessPage({
 
   const isSuccess = paymentIntent.status === "succeeded";
 
+  // Resolve the download verification before returning the JSX
+  const downloadVerificationId = isSuccess
+    ? await createDownloadVerification(product.id)
+    : null;
+
   return (
     <div className="max-w-5xl w-full mx-auto space-y-8">
-      <h1 className="text-4xl font-bold">
-        {isSuccess ? "Success!" : "Error!"}
-      </h1>
+      <h1 className="text-4xl font-bold">{isSuccess ? "Success!" : "Error!"}</h1>
       <div className="flex gap-4 items-center">
         <div className="aspect-video flex-shrink-0 w-1/3 relative">
           <Image
@@ -50,20 +72,12 @@ export default async function SuccessPage({
           />
         </div>
         <div>
-          <div className="text-lg">
-            {formatCurrency(product.priceInCents / 100)}
-          </div>
+          <div className="text-lg">{formatCurrency(product.priceInCents / 100)}</div>
           <h1 className="text-2xl font-bold">{product.name}</h1>
-          <div className="line-clamp-3 text-muted-foreground">
-            {product.description}
-          </div>
+          <div className="line-clamp-3 text-muted-foreground">{product.description}</div>
           <Button className="mt-4" size="lg" asChild>
             {isSuccess ? (
-              <a
-                href={`/products/download/${await createDownloadVerification(
-                  product.id
-                )}`}
-              >
+              <a href={`/products/download/${downloadVerificationId}`}>
                 Download
               </a>
             ) : (
@@ -74,14 +88,4 @@ export default async function SuccessPage({
       </div>
     </div>
   );
-}
-
-async function createDownloadVerification(productId: string) {
-  const verification = await db.downloadVerification.create({
-    data: {
-      productId,
-      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
-    },
-  });
-  return verification.id;
 }
