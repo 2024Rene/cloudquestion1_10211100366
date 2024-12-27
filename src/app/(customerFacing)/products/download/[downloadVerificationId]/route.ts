@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import db from "@/db/db"
 import { NextRequest, NextResponse } from "next/server"
 import fs from "fs/promises"
 
+// Correctly type params in the GET handler
 export async function GET(
   req: NextRequest,
-  {
-    params: { downloadVerificationId },
-  }: { params: { downloadVerificationId: string } }
+  { params }: { params: { downloadVerificationId: string } }
 ) {
+  const { downloadVerificationId } = params // Destructure downloadVerificationId from params
+
   const data = await db.downloadVerification.findUnique({
     where: { id: downloadVerificationId, expiresAt: { gt: new Date() } },
     select: { product: { select: { filePath: true, name: true } } },
