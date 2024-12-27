@@ -1,38 +1,49 @@
+# E-Commerce Platform with Stripe Integration
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This project is a fully functional e-commerce application built with [Next.js](https://nextjs.org), integrated with [Stripe](https://stripe.com) for seamless payment processing, and RENDER for database management and website deployment. It features a clean and responsive user interface, dynamic product listings, and secure checkout functionality.
+
+## Screenshots
+
+You can view screenshots of various parts of the website in this [Google Docs file](https://docs.google.com/document/d/13MQDafbFrs-L4SGJRjS4VEnuBgNU5S4aTeECRlLyLRc/edit?usp=drive_link).
+
+## Features for the Admin
+
+- **Product Listings**: Products can be added for the customer to see including images, descriptions, and pricing. After products are added, the admin has the choice to activate it which makes the product appear on the customer side or deactivate a product which takes it off the customer side.The admin can also delete or download products that have been added.
+- **Dashboard**: Integration with Stripe for creating and managing payment intents and checkout flows.
+- **Customers**: The admin can see which and how many users have made purchases here.
+- **Sales**: Automatically generates the breakdown and total amount of items purchased.
+- **Responsive Design**: Optimized for desktop and mobile devices.
+- **Custom Backend**: Powered by a database for managing the web app.
+
+## Features for Customers
+
+- **Dynamic Product Listings**: Products are fetched from a database with detailed information, including images, descriptions, and pricing.
+- **Secure Payment Processing**: Integration with Stripe for creating and managing payment intents and checkout flows.
+- **Orders**: Users can view all items purchased on this tab. They can also request for all orders to be sent via email.
+- **Order Validation**: Ensures that users can only purchase products once and provides download access for digital products after purchase.
+- **Download Verification System**: Automatically generates time-limited download links for purchased digital products.
+- **Responsive Design**: Optimized for desktop and mobile devices.
+- **Custom Backend**: Powered by a database for managing the web app.
+
+## Technologies Used
+
+- **Frontend**: Next.js, React
+- **Database**: Render and pgAdmin 4 for database management
+- **Backend**: Node.js
+- **Payments**: Stripe API
+- **Styling**: Tailwind CSS
+- **Deployment**: Render
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js, Next.js and their dependencies
+- A Stripe account with API keys
+- Render project for database integration and Website deployment
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### THINGS TO NOTE
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+As resources are constrained, the stripe account created was on a free tier basis which affects processing payment on the web app. Once you navigate to checkout and use a dummy visa card provided by stripe at (https://docs.stripe.com/testing?testing-method=card-numbers), validation of purchase does not go through. 
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-c20d3682eb24083ee130fe31c1cb530ffb85c4e5
+This affects a customer viewing orders, requestinng for orders to be sent via email and the admin seeing their customers and sales.
