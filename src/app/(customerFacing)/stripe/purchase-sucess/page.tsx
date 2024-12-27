@@ -11,19 +11,29 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
 export default async function SuccessPage({
   searchParams,
 }: {
-  searchParams: { payment_intent: string }
+  searchParams: Record<string, string>
 }) {
-  const paymentIntent = await stripe.paymentIntents.retrieve(
-    searchParams.payment_intent
-  )
-  if (paymentIntent.metadata.productId == null) return notFound()
+  const paymentIntentId = searchParams.payment_intent;
+
+  if (!paymentIntentId) {
+    return notFound();
+  }
+
+  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+  if (!paymentIntent.metadata?.productId) {
+    return notFound();
+  }
 
   const product = await db.product.findUnique({
     where: { id: paymentIntent.metadata.productId },
-  })
-  if (product == null) return notFound()
+  });
 
-  const isSuccess = paymentIntent.status === "succeeded"
+  if (!product) {
+    return notFound();
+  }
+
+  const isSuccess = paymentIntent.status === "succeeded";
 
   return (
     <div className="max-w-5xl w-full mx-auto space-y-8">
@@ -63,16 +73,15 @@ export default async function SuccessPage({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 async function createDownloadVerification(productId: string) {
-  return (
-    await db.downloadVerification.create({
-      data: {
-        productId,
-        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
-      },
-    })
-  ).id
+  const verification = await db.downloadVerification.create({
+    data: {
+      productId,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+    },
+  });
+  return verification.id;
 }
