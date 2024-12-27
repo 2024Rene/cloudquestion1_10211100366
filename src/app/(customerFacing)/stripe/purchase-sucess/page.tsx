@@ -8,6 +8,11 @@ import Stripe from "stripe"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
 
+export async function getServerSideProps(context: { query: { payment_intent: string } }) {
+  const { payment_intent } = context.query;
+  return { props: { searchParams: { payment_intent } } };
+}
+
 export default async function SuccessPage({
   searchParams,
 }: {
